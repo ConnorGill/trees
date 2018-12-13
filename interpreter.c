@@ -51,7 +51,7 @@ RBT *readRBTCorpus(RBT *tree, char *filename) {
 
         if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0'))
         {
-          ;
+          free(str); //EGT
         }
         else
         {
@@ -97,7 +97,7 @@ GST *readGSTCorpus(GST *tree, char * filename) {
 
         if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0'))
         {
-          ;
+          free(str);
         }
         else
         {
@@ -105,6 +105,7 @@ GST *readGSTCorpus(GST *tree, char * filename) {
           insertGST(tree, finalStr);
         }
         lineTest++;
+
       }
       skipWhiteSpace(fp);
       test = fgetc(fp);
@@ -143,8 +144,9 @@ void readRBTCommands(RBT *tree, char *filename, FILE *outfp) {
         str = cleanString(str, strlen(str));
 
         if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0')) {;}
-        else { finalStr = newSTRING(str); freq = freqRBT(tree, finalStr); }
+        else { finalStr = newSTRING(str); freq = freqRBT(tree, finalStr);}
         fprintf(outfp, "Frequency of \"%s\": %d\n", str, freq);
+		freeSTRING(finalStr); //EGT
         break;
       case 'd':
         skipWhiteSpace(fp);
@@ -154,13 +156,14 @@ void readRBTCommands(RBT *tree, char *filename, FILE *outfp) {
 
         str = cleanString(str, strlen(str));
 
-        if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0')) {;}
+        if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0')) {free(str);}
         else
         {
           finalStr = newSTRING(str);
           if (freqRBT(tree, finalStr) == 0)
           {
             fprintf(outfp, "Value "); displaySTRING(finalStr, outfp); fprintf(outfp, " not found.\n");
+			freeSTRING(finalStr); //EGT
           }
           else{ deleteRBT(tree, finalStr); }
         }
@@ -212,6 +215,7 @@ void readGSTCommands(GST *tree, char *filename, FILE *outfp) {
         if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0')) {;}
         else { finalStr = newSTRING(str); freq = freqGST(tree, finalStr); }
         fprintf(outfp, "Frequency of \"%s\": %d\n", str, freq);
+        freeSTRING(finalStr);
         break;
       case 'd':
         skipWhiteSpace(fp);
@@ -221,15 +225,17 @@ void readGSTCommands(GST *tree, char *filename, FILE *outfp) {
 
         str = cleanString(str, strlen(str));
 
-        if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0')) {;}
+        if(str[0] == '\0' || (str[0] == ' ' && str[1] == '\0')) {free(str);}
         else
         {
           finalStr = newSTRING(str);
           if (freqGST(tree, finalStr) == 0)
           {
             fprintf(outfp, "Value "); displaySTRING(finalStr, outfp); fprintf(outfp, " not found.\n");
+            freeSTRING(finalStr);
           }
-          else{ deleteGST(tree, finalStr); }
+          else{ deleteGST(tree, finalStr); freeSTRING(finalStr);}
+
         }
         break;
       case 'i':
@@ -275,12 +281,14 @@ char * cleanString(char *str, int s)
 
   if(tracker != 0 && newStr[tracker - 1] == ' ')
   {
-    newStr[tracker - 1] = '\0';
+    newStr[--tracker] = '\0';
   }
   else
   {
     newStr[tracker] = '\0';
   }
+  newStr=(char *) realloc(newStr, (tracker+1)*(sizeof(char))); //EGT
+  free(str);
   return newStr;
 
     /*while(i < s)

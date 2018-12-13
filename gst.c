@@ -140,12 +140,12 @@ extern int deleteGST(GST *t, void *key) {
     --freq;
     setGSTFreq(ptr, freq);
     setGSTduplicates(t, getGSTduplicates(t) - 1);
-    free(newVal);
+    freeGVAL(newVal); //EGT
     return freq;
   }
   GSTVAL * v = getTNODEvalue(locateGST(t, key));
   int result = deleteBST(tree, v);
-  free(v);
+  freeGVAL(v); //EGT
   return result;
 }
 

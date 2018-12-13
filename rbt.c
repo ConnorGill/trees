@@ -149,19 +149,19 @@ extern int deleteRBT(RBT *t, void *key) {
   else if (freq > 1) {
     RBTVAL * v = newRBTVAL(t, key);
     int result = deleteGST(tree, v);
-    free(v);
+    freeRBTVAL(v); //EGT
     return result;
   }
   RBTVAL * newVal = newRBTVAL(t, key);
   TNODE * node = findRBTNode(t, newVal);
   node = swapToLeafRBT(t, node);
   deletionFixUp(tree, node);
-  free(newVal); //EGT
+  freeRBTVAL(newVal); //EGT
   newVal = unwrapGST(node); // stores RBTVAL inside node
   pruneLeafRBT(t, node); // frees GSTVAL
   setTNODEfree(node, 0); // does not set a freeMethod for TNODE
   freeTNODE(node); // frees the node
-  free(newVal); // frees the RBTVAL
+  freeRBTVAL(newVal); //EGT // frees the RBTVAL
   setRBTsize(t, sizeRBT(t) - 1);
   return 0;
 }

@@ -26,16 +26,18 @@ int main(int argc, char **argv) {
 
   // FIXME
   if (green) {
-    GST * tree = newGST(compareSTRING); // change to GST
+    GST * tree = newGST(compareSTRING);
+	setGSTfree(tree, freeSTRING);
     setGSTdisplay(tree, displaySTRING);
     GSTInterpreter(tree, argv, stdout);
-    // FIXME: free *tree
+    freeGST(tree);
   }
   else if (rbt == 1 || (rbt == 0 && green == 0)) {
     RBT * tree = newRBT(compareSTRING);
+	setRBTfree(tree, freeSTRING);
     setRBTdisplay(tree, displaySTRING);
     RBTInterpreter(tree, argv, stdout);
-    // FIXME: free *tree
+    freeRBT(tree);
   }
   else {
     printf("Error: invalid flag. Valid flags are: '-v' | '-g' | '-r'\n");

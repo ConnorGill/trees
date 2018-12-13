@@ -51,5 +51,6 @@ compareSTRING(void *v,void *w)
 void
 freeSTRING(void *v)
     {
+	free(((STRING *)v)->value); //EGT
     free((STRING *) v);
     }
